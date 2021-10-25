@@ -1,0 +1,14 @@
+Click
+clickclick
+flask
+pandas
+numpy
+pyyaml
+scikit-learn
+matplotlib
+seaborn
+pytorch
+torchvision
+pytorch-lightning==0.8.5
+tensorboard==2.2.2
+tensorflow
