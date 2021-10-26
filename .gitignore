@@ -29,3 +29,6 @@ var/
 
 # Jupyter
 .ipynb_checkpoints
+
+# figures
+figures
