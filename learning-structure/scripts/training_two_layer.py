@@ -6,6 +6,7 @@ from utils.nn import TARGET_FUNCS_DICT, LOSS_DICT
 from networks import two_layer_net
 
 SEED = 42
+PLOT_EVERY = 5
 
 
 @click.command()
