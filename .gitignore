@@ -30,5 +30,6 @@ var/
 # Jupyter
 .ipynb_checkpoints
 
-# figures
+# code generated data
 figures
+experiments
