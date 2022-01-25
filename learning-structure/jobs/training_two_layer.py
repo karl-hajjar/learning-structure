@@ -33,6 +33,7 @@ def main(n_samples=500, input_dim=3, width=1024, bias=True, n_steps=1000, base_l
          tgt_func_name="target_func", plot_every=1):
     if batch_size is None:
         batch_size = n_samples
+    tgt_func_name = '{}_{}d'.format(tgt_func_name, input_dim)
 
     logger, experiment_dir = _set_up_experiment(n_samples, input_dim, width, bias, n_steps, base_lr, batch_size,
                                                 tgt_func_name, plot_every)
@@ -40,7 +41,7 @@ def main(n_samples=500, input_dim=3, width=1024, bias=True, n_steps=1000, base_l
     # data
     X = torch.randn(size=(n_samples, input_dim), requires_grad=False)
     target_func = TARGET_FUNCS_DICT[tgt_func_name]
-    y = target_func(X)
+    y = target_func(X).reshape(len(X), 1)
     logger.info("Input data shape : {}".format(X.shape))
     logger.info("Output data shape : {}".format(y.shape))
 
@@ -57,7 +58,8 @@ def main(n_samples=500, input_dim=3, width=1024, bias=True, n_steps=1000, base_l
         neurons_trajectories = train_network(logger, X, y, network, loss, optimizer, n_steps, n_samples, batch_size,
                                              plot_every)
         try:
-            plot_and_save_neuron_trajectories(logger, experiment_dir, neurons_trajectories, signs, plot_every)
+            plot_and_save_neuron_trajectories(logger, experiment_dir, input_dim, neurons_trajectories, signs,
+                                              plot_every)
         except Exception as e:
             logger.exception("Exception while plotting the neurons' trajectories : {}".format(e))
 
@@ -71,6 +73,7 @@ def _set_up_experiment(input_dim, n_samples, width, bias, n_steps, base_lr, batc
     basic_config = 'm={}_n={}_bias={}_bs={}'.format(width, n_samples, bias, batch_size)
     detailed_config = 'steps={}_lr={}_tgt-func={}_pe={}'.format(n_steps, base_lr, tgt_func_name, plot_every)
     experiment_dir = os.path.join(EXPERIMENTS_DIR, basic_config, detailed_config)
+    create_dir(experiment_dir)
 
     logger = set_up_logger(os.path.join(experiment_dir, 'run.log'))
 
@@ -122,18 +125,28 @@ def train_network(logger, X, y, network, loss, optimizer, n_steps, n_samples, ba
     return neurons_trajectories
 
 
-def plot_and_save_neuron_trajectories(logger, experiment_dir, neurons, signs, plot_every):
+def plot_and_save_neuron_trajectories(logger, experiment_dir, input_dim, neurons, signs, plot_every):
     figures_dir = os.path.join(experiment_dir, "trajectories")
+    create_dir(figures_dir)
     logger.info("Saving plots of neurons at {}".format(figures_dir))
     fig = plt.figure(figsize=(8, 8))
-    plot_neurons_3d(fig, neurons=neurons[0], signs=signs)
+    if input_dim == 2:
+        plot_neurons_2d(fig, neurons=neurons[0], signs=signs)
+    elif input_dim == 3:
+        plot_neurons_3d(fig, neurons=neurons[0], signs=signs, show_plane=True)
     fig_path = os.path.join(figures_dir, 'step_{}.png'.format(0))
-    plt.savefig(fig_path, bbox_inches='tight', pad_inches=0)
+    plt.savefig(fig_path, bbox_inches='tight', pad_inches=0.2)
+    fig.clf()
 
     for i in range(1, len(neurons) + 1):
-        plot_neurons_trajectory_3d(fig, neurons=neurons[:i], signs=signs)
+        logger.info("Plotting trajectory after {:,} steps of SGD".format(plot_every * i))
+        if input_dim == 2:
+            plot_neurons_trajectory_2d(fig, neurons=neurons[:i], signs=signs)
+        elif input_dim == 3:
+            plot_neurons_trajectory_3d(fig, neurons=neurons[:i], signs=signs, show_plane=True)
         fig_path = os.path.join(figures_dir, 'step_{}.png'.format(plot_every * i))
-        plt.savefig(fig_path, bbox_inches='tight', pad_inches=0)
+        plt.savefig(fig_path, bbox_inches='tight', pad_inches=0.2)
+        fig.clf()
 
 
 if __name__ == '__main__':

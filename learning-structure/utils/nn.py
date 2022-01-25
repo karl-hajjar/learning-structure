@@ -39,18 +39,30 @@ def generate_bernouilli_weights(width: int) -> torch.Tensor:
     return 2 * torch.randint(low=0, high=2, size=(width,), requires_grad=False) - 1
 
 
-def target_func(x: torch.Tensor) -> torch.Tensor:
+def target_func_3d(x: torch.Tensor) -> torch.Tensor:
     return x[:, 0].abs() + x[:, 1]
 
 
-def even_target_func(x: torch.Tensor) -> torch.Tensor:
+def even_target_func_3d(x: torch.Tensor) -> torch.Tensor:
     return x[:, 0].abs() + x[:, 1].abs()
 
 
-def odd_target_func(x: torch.Tensor) -> torch.Tensor:
+def odd_target_func_3d(x: torch.Tensor) -> torch.Tensor:
     return x[:, 0] + x[:, 1]
 
 
-TARGET_FUNCS_DICT = {'target_func': target_func,
-                     'even_target_func': even_target_func,
-                     'odd_target_func': odd_target_func}
+def target_func_2d(x: torch.Tensor) -> torch.Tensor:
+    return x[:, 0].abs() + x[:, 0]
+
+
+def even_target_func_2d(x: torch.Tensor) -> torch.Tensor:
+    return x[:, 0].abs()
+
+
+def odd_target_func_2d(x: torch.Tensor) -> torch.Tensor:
+    return x[:, 0]
+
+
+TARGET_FUNCS_DICT = {func.__name__: func for func in
+                     [target_func_3d, even_target_func_3d, odd_target_func_3d,
+                      target_func_2d, even_target_func_2d, odd_target_func_2d]}

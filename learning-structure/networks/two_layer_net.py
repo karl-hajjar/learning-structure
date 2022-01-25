@@ -26,6 +26,7 @@ class TwoLayerNet(LightningModule):
     def _build_model(self):
         self.input_layer = nn.Linear(in_features=self.input_dim, out_features=self.width, bias=self.bias)
         self.output_layer = nn.Linear(in_features=self.width, out_features=1, bias=self.bias)
+        # self.output_layer = nn.Linear(in_features=self.width, out_features=1, bias=False)
 
     def initialize_parameters(self):
         input_weights = generate_uniform_sphere_weights(width=self.width, d=self.input_dim)
