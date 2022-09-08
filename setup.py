@@ -27,5 +27,6 @@ setuptools.setup(
                       'torch',
                       'torchvision',
                       'pytorch-lightning==0.8.5',
-                      'tensorboard==2.2.2'],
+                      'tensorboard==2.2.2',
+                      'jax[cpu]'],
 )
