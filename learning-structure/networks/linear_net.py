@@ -43,4 +43,4 @@ class LinearNet(LightningModule):
             self.output_layer.weight.data.copy_(output_weights.data)
 
     def forward(self, x):
-        return (1 / self.width) * self.output_layer(self.input_layer.forward(x))
+        return (1 / (2 * self.width)) * self.output_layer(self.input_layer.forward(x))
