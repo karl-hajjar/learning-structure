@@ -97,7 +97,7 @@ def _log_experiment_parameters(logger, input_dim, n_samples, width, bias, n_step
 
 
 def train_network(logger, X, y, network, loss, optimizer, n_steps, n_samples, batch_size, plot_every):
-    neurons_trajectories = [network.input_layer.weight.data.detach().clone().numpy()]
+    neurons_trajectories = [network.first_layer.weight.data.detach().clone().numpy()]
     cmpt_steps = 0
     batch_index = 0
     while cmpt_steps < n_steps:
@@ -120,7 +120,7 @@ def train_network(logger, X, y, network, loss, optimizer, n_steps, n_samples, ba
         cmpt_steps += 1
 
         if cmpt_steps % plot_every == 0:
-            neurons_trajectories.append(network.input_layer.weight.data.detach().clone().numpy())
+            neurons_trajectories.append(network.first_layer.weight.data.detach().clone().numpy())
 
     return neurons_trajectories
 
